@@ -1,5 +1,8 @@
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <sys/ioctl.h>
 #include <linux/i2c-dev.h>
+#include <fcntl.h>
 #include <stdio.h>
 #include "MPU6050.h" 
 
@@ -41,9 +44,32 @@ typedef union accel_t_gyro_union
     int16_t y_gyro;
     int16_t z_gyro;
   } value;
-};
+} Horst;
  
 int deviceHandle; 
+
+ 
+int readFromMPU6050(uint8_t command, uint8_t *buffer, uint8_t size)
+{
+    int result = i2c_smbus_read_i2c_block_data(deviceHandle, command, size, buffer);
+    if (result != size)
+    {
+        printf("Error while reading from device.");
+        return -1;
+    } 
+	return 0;
+}
+ 
+int writeToMPU6050(uint8_t command, uint8_t value)
+{
+    int result = i2c_smbus_write_byte_data(deviceHandle, command, value);
+    if (result < 0)
+    {
+        printf("Error while writing to device.");
+        return result;
+    }
+	return 0;
+}
 
 void connectMPU6050()
 {      
@@ -104,7 +130,7 @@ void connectMPU6050()
 void test()
 {
     int error;
-    accel_t_gyro_union accel_t_gyro;
+    Horst accel_t_gyro;
         
     // Read the raw values.
     // Read 14 bytes at once,
@@ -123,19 +149,19 @@ void test()
     // After this, the registers values are swapped,
     // so the structure name like x_accel_l does no
     // longer contain the lower byte.
-//    uint8_t swap;
-//    #define SWAP(x,y) swap = x; x = y; y = swap
-//    
-//    SWAP (accel_t_gyro.reg.x_accel_h, accel_t_gyro.reg.x_accel_l);
-//    SWAP (accel_t_gyro.reg.y_accel_h, accel_t_gyro.reg.y_accel_l);
-//    SWAP (accel_t_gyro.reg.z_accel_h, accel_t_gyro.reg.z_accel_l);
-//    SWAP (accel_t_gyro.reg.t_h, accel_t_gyro.reg.t_l);
-//    SWAP (accel_t_gyro.reg.x_gyro_h, accel_t_gyro.reg.x_gyro_l);
-//    SWAP (accel_t_gyro.reg.y_gyro_h, accel_t_gyro.reg.y_gyro_l);
-//    SWAP (accel_t_gyro.reg.z_gyro_h, accel_t_gyro.reg.z_gyro_l);
+    uint8_t swap;
+    #define SWAP(x,y) swap = x; x = y; y = swap
+    
+    SWAP (accel_t_gyro.reg.x_accel_h, accel_t_gyro.reg.x_accel_l);
+    SWAP (accel_t_gyro.reg.y_accel_h, accel_t_gyro.reg.y_accel_l);
+    SWAP (accel_t_gyro.reg.z_accel_h, accel_t_gyro.reg.z_accel_l);
+    SWAP (accel_t_gyro.reg.t_h, accel_t_gyro.reg.t_l);
+    SWAP (accel_t_gyro.reg.x_gyro_h, accel_t_gyro.reg.x_gyro_l);
+    SWAP (accel_t_gyro.reg.y_gyro_h, accel_t_gyro.reg.y_gyro_l);
+    SWAP (accel_t_gyro.reg.z_gyro_h, accel_t_gyro.reg.z_gyro_l);
     
     // Print the raw acceleration values
-    printf("Acceleration x,y,z: %f, %f, %f\n", accel_t_gyro.value.x_accel, 
+    printf("Acceleration x,y,z: %d, %d, %d\n", accel_t_gyro.value.x_accel, 
         accel_t_gyro.value.y_accel, accel_t_gyro.value.z_accel);
     
     // The temperature sensor is -40 to +85 degrees Celsius.
@@ -147,30 +173,6 @@ void test()
     printf("Temperature: %f [°]\n", dT);
     
     // Print the raw gyro values.
-    printf("Gyro x,y,z: %f, %f, %f\n", accel_t_gyro.value.x_gyro,
+    printf("Gyro x,y,z: %d, %d, %d\n", accel_t_gyro.value.x_gyro,
         accel_t_gyro.value.y_gyro, accel_t_gyro.value.z_gyro);
-    
-    delay(1000);
-}
- 
-int readFromMPU6050(uint8_t command, uint8_t *buffer, uint8_t size)
-{
-    int result = i2c_smbus_read_i2c_block_data(deviceHandle, command, size, buffer);
-    if (result != size)
-    {
-        printf("Error while reading from device.");
-        return -1;
-    } 
-	return 0;
-}
- 
-int writeToMPU6050(uint8_t command, uint8_t value)
-{
-    int result = i2c_smbus_write_byte_data(deviceHandle, command, value);
-    if (result < 0)
-    {
-        printf("Error while writing to device.");
-        return result;
-    }
-	return 0;
 }

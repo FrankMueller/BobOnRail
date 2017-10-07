@@ -1,3 +1,4 @@
+#include <unistd.h>
 #include "MPU6050.h"
 #include "MPU6050.c"
 
@@ -12,6 +13,11 @@ int main(int argc, char *argv[])
 {
     connectMPU6050();
 
-	test();
+    do
+    {
+        test();
+        usleep(100000);
+    }
+    while (1);
 }
 

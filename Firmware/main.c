@@ -10,8 +10,8 @@
 
 int main(int argc, char *argv[])
 {
-    setup();
+    connectMPU6050();
 
-	loop();
+	test();
 }
 

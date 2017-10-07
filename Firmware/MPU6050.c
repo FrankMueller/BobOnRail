@@ -15,7 +15,7 @@
 // lower address, so that has to be corrected.
 // The register part "reg" is only used internally,
 // and are swapped in code.
-typedef union accel_t_gyro_union
+typedef union measurement_data
 {
   struct
   {
@@ -44,7 +44,7 @@ typedef union accel_t_gyro_union
     int16_t y_gyro;
     int16_t z_gyro;
   } value;
-} Horst;
+} Measurement_Data;
  
 int deviceHandle; 
 
@@ -127,28 +127,20 @@ void connectMPU6050()
     }
 }
  
-void test()
+int measure(float *accelerationInX, float *accelerationInY, float* accelerationInZ,
+             float *gyrationInX, float *gyrationInY, float *gyrationInZ,
+             float *temperature)
 {
-    int error;
-    Horst accel_t_gyro;
-        
     // Read the raw values.
-    // Read 14 bytes at once,
-    // containing acceleration, temperature and gyro.
-    // With the default settings of the MPU-6050,
-    // there is no filter enabled, and the values
-    // are not very stable.
-    error = readFromMPU6050(MPU6050_ACCEL_XOUT_H, (uint8_t *) &accel_t_gyro, sizeof(accel_t_gyro));
+    Measurement_Data accel_t_gyro;
+    int error = readFromMPU6050(MPU6050_ACCEL_XOUT_H, (uint8_t *) &accel_t_gyro, sizeof(accel_t_gyro));
     if (error != 0)
     {
-	    printf("Read accel, temp and gyro, error = %d\n", error);
-	    return;
+	printf("Error while reading measurement data (code %d)\n", error);
+	return error;
     }
     
     // Swap all high and low bytes.
-    // After this, the registers values are swapped,
-    // so the structure name like x_accel_l does no
-    // longer contain the lower byte.
     uint8_t swap;
     #define SWAP(x,y) swap = x; x = y; y = swap
     
@@ -159,20 +151,21 @@ void test()
     SWAP (accel_t_gyro.reg.x_gyro_h, accel_t_gyro.reg.x_gyro_l);
     SWAP (accel_t_gyro.reg.y_gyro_h, accel_t_gyro.reg.y_gyro_l);
     SWAP (accel_t_gyro.reg.z_gyro_h, accel_t_gyro.reg.z_gyro_l);
-    
-    // Print the raw acceleration values
-    printf("Acceleration x,y,z: %d, %d, %d\n", accel_t_gyro.value.x_accel, 
-        accel_t_gyro.value.y_accel, accel_t_gyro.value.z_accel);
+
+    *accelerationInX = (float)accel_t_gyro.value.x_accel;
+    *accelerationInY = (float)accel_t_gyro.value.y_accel;
+    *accelerationInZ = (float)accel_t_gyro.value.z_accel;
+
+    *gyrationInX = (float)accel_t_gyro.value.x_gyro;
+    *gyrationInY = (float)accel_t_gyro.value.y_gyro;
+    *gyrationInZ = (float)accel_t_gyro.value.z_gyro;
     
     // The temperature sensor is -40 to +85 degrees Celsius.
     // It is a signed integer.
     // According to the datasheet:
     //   340 per degrees Celsius, -512 at 35 degrees.
     // At 0 degrees: -512 - (340 * 35) = -12412
-    double dT = ( (double) accel_t_gyro.value.temperature + 12412.0) / 340.0;
-    printf("Temperature: %f [°]\n", dT);
-    
-    // Print the raw gyro values.
-    printf("Gyro x,y,z: %d, %d, %d\n", accel_t_gyro.value.x_gyro,
-        accel_t_gyro.value.y_gyro, accel_t_gyro.value.z_gyro);
+    *temperature = ( (float) accel_t_gyro.value.temperature + 12412.0) / 340.0;
+
+    return 0;
 }

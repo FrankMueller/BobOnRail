@@ -2,20 +2,27 @@
 #include "MPU6050.h"
 #include "MPU6050.c"
 
-
-#define A_GAIN 0.0573      // [deg/LSB]
-#define G_GAIN 0.070     // [deg/s/LSB]
-#define RAD_TO_DEG 57.29578
-#define M_PI 3.14159265358979323846
-
-
 int main(int argc, char *argv[])
 {
     connectMPU6050();
 
+    float temperature;
+    float accelerationInX, accelerationInY, accelerationInZ;
+    float gyrationInX, gyrationInY, gyrationInZ;
     do
     {
-        test();
+        measure(&accelerationInX, &accelerationInY, &accelerationInZ,
+                &gyrationInX, &gyrationInY, &gyrationInZ,
+                &temperature);
+
+        printf("Acceleration x,y,z: %f, %f, %f\n", 
+            accelerationInX, accelerationInY, accelerationInZ);
+    
+        printf("Temperature: %f [°]\n", temperature);
+    
+        printf("Gyration x,y,z: %f, %f, %f\n", 
+            gyrationInX, gyrationInY, gyrationInZ);
+
         usleep(100000);
     }
     while (1);

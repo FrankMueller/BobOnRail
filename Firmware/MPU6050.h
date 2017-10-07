@@ -3,20 +3,6 @@
 //
 // By arduino.cc user "Krodal".
 //
-// June 2012
-//      first version
-// July 2013
-//      The 'int' in the union for the x,y,z
-//      changed into int16_t to be compatible
-//      with Arduino Due.
-//
-// Open Source / Public Domain
-//
-// Using Arduino 1.0.1
-// It will not work with an older version,
-// since Wire.endTransmission() uses a parameter
-// to hold or release the I2C bus.
-//
 // Documentation:
 // - The InvenSense documents:
 //   - "MPU-6000 and MPU-6050 Product Specification",
@@ -26,21 +12,6 @@
 //   - "MPU-6000/MPU-6050 9-Axis Evaluation Board User Guide"
 //     AN-MPU-6000EVB.pdf
 //
-// The accuracy is 16-bits.
-//
-// Temperature sensor from -40 to +85 degrees Celsius
-//   340 per degrees, -512 at 35 degrees.
-//
-// At power-up, all registers are zero, except these two:
-//      Register 0x6B (PWR_MGMT_2) = 0x40  (I read zero).
-//      Register 0x75 (WHO_AM_I)   = 0x68.
-//
- 
- 
- 
-// The name of the sensor is "MPU-6050".
-// For program code, I omit the '-',
-// therefor I use the name "MPU6050....".
 
 #include <stdint.h> 
  
@@ -157,7 +128,7 @@
 #define MPU6050_D7 7
  
 // AUX_VDDIO Register
-#define MPU6050_AUX_VDDIO MPU6050_D7  // I2C high: 1=VDD, 0=VLOGIC
+//#define MPU6050_AUX_VDDIO MPU6050_D7  // I2C high: 1=VDD, 0=VLOGIC
  
 // CONFIG Register
 // DLPF is Digital Low Pass Filter for both gyro and accelerometers.
@@ -561,7 +532,7 @@
 #define MPU6050_FIFO_RESET     MPU6050_D2
 #define MPU6050_I2C_IF_DIS     MPU6050_D4   // must be 0 for MPU-6050
 #define MPU6050_I2C_MST_EN     MPU6050_D5
-#define MPU6050_FIFO_EN        MPU6050_D6
+//#define MPU6050_FIFO_EN        MPU6050_D6
  
 // PWR_MGMT_1 Register
 // These are the names for the bits.

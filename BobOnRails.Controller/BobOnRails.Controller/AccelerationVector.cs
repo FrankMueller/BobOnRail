@@ -1,30 +1,24 @@
 ﻿namespace BobOnRails.Controller
 {
     /// <summary>
-    /// A struct representing an acceleration vector in the cartesian space.
+    /// A class representing an acceleration vector in 3D cartesian space.
     /// </summary>
-    public struct AccelerationVector : ICartesianVector
+    public sealed class AccelerationVector : ThreeDimensionalVector
     {
         /// <summary>
         /// Gets or sets the acceleration along the x-coordinate [m/s^2].
         /// </summary>
-        public double X { get; set; }
+        public override double X { get => base.X; set => base.X = value; }
 
         /// <summary>
         /// Gets or sets the acceleration along the y-coordinate [m/s^2].
         /// </summary>
-        public double Y { get; set; }
+        public override double Y { get => base.Y; set => base.Y = value; }
 
         /// <summary>
         /// Gets or sets the acceleration along the z-coordinate [m/s^2].
         /// </summary>
-        public double Z { get; set; }
-
-        /// <inheritdoc cref="ICartesianVector.Length" />
-        public double Length
-        {
-            get { return CartesianVectorHelper.GetLength(this); }
-        }
+        public override double Z { get => base.Z; set => base.Z = value; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AccelerationVector"/> class.
@@ -32,13 +26,9 @@
         /// <param name="x">The acceleration along the x-coordinate [m/s^2].</param>
         /// <param name="y">The acceleration along the y-coordinate [m/s^2].</param>
         /// <param name="z">The acceleration along the z-coordinate [m/s^2].</param>
-        public AccelerationVector(double x, double y, double z) 
-            : this()
-        {
-            X = x;
-            Y = y;
-            Z = z;
-        }
+        public AccelerationVector(double x, double y, double z)
+            : base(x, y, z)
+        { }
 
         public static AccelerationVector operator +(AccelerationVector a, AccelerationVector b)
         {
@@ -58,12 +48,6 @@
         public static AccelerationVector operator *(double scale, AccelerationVector position)
         {
             return new AccelerationVector(position.X * scale, position.Y * scale, position.Z * scale);
-        }
-
-        /// <inheritdoc />
-        public override string ToString()
-        {
-            return $"{X}, {Y}, {Z}";
         }
     }
 }

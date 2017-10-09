@@ -7,6 +7,7 @@ namespace BobOnRails.Controller.Physics.UnitTests
     [TestFixture]
     public class MotionTrackerTests
     {
+        [TestCase(0.353, 50, 200, 1)]
         [TestCase(1, 50, 1000, 2)]
         [TestCase(1, 50, 100, 2)]
         public void TracksCirclePathProperly(double circleRadius, double timeForOneRotation,
@@ -16,55 +17,22 @@ namespace BobOnRails.Controller.Physics.UnitTests
             var timeStep = timeForOneRotation / timeStepsForOneRotation;
 
             //Compute the parameter at the initial point on the circle
-            var initialPosition = new PositionVector(
-                Math.Cos(0) * circleRadius, 
-                Math.Sin(0) * circleRadius, 
-                0);
-
-            var initialVelocity = new VelocityVector(
-                0,
-                2.0 * Math.PI * circleRadius / timeForOneRotation,
-                0);
-
-            var initialAcceleration = new AccelerationVector(
-                0,
-                0,
-                0);
+            var initialPosition = GetPositionOnCircle(circleRadius, 0);
+            var initialVelocity = GetVelocityOnCircle(circleRadius, 0, timeForOneRotation);
+            var initialAcceleration = GetAccelerationOnCircle(circleRadius, 0, timeForOneRotation);
 
             //Initialize the motion tracker
-            var tracker = new MotionTracker(
-                new PathPosition(TimeSpan.Zero, initialPosition, initialVelocity, initialAcceleration));
+            var initialState = new PathPosition(TimeSpan.Zero, initialPosition, initialVelocity, initialAcceleration);
+            var tracker = new MotionTracker(initialState);
 
             //Move along the circle
-            var lastPosition = initialPosition;
-            var lastVelocity = initialVelocity;
             var maxDeviation = 0.0;
             for (int i = 1; i < timeStepsForOneRotation * numberOfRotations; i++)
             {
-                var angle = i * angleStep;
-
-                var position = new PositionVector(
-                    Math.Cos(angle) * circleRadius,
-                    Math.Sin(angle) * circleRadius,
-                    0);
-
-                var velocity = new VelocityVector(
-                    (position.X - lastPosition.X) / timeStep,
-                    (position.Y - lastPosition.Y) / timeStep,
-                    (position.Z - lastPosition.Z) / timeStep);
-
-                var acceleration = new AccelerationVector(
-                    (velocity.X - lastVelocity.X) / timeStep,
-                    (velocity.Y - lastVelocity.Y) / timeStep,
-                    (velocity.Z - lastVelocity.Z) / timeStep);
-
-                lastPosition = position;
-                lastVelocity = velocity;
-
+                var acceleration = GetAccelerationOnCircle(circleRadius, i * angleStep, timeForOneRotation);
                 tracker.AppendMotion(acceleration, TimeSpan.FromSeconds(timeStep));
 
-                var currentPosition = tracker.CurrentPosition.Position;
-                var currentRadius = Math.Sqrt(currentPosition.X * currentPosition.X + currentPosition.Y * currentPosition.Y);
+                var currentRadius = tracker.CurrentPosition.Position.Length;
                 var deviation = Math.Abs(currentRadius - circleRadius);
                 maxDeviation = Math.Max(maxDeviation, deviation);
 
@@ -72,6 +40,34 @@ namespace BobOnRails.Controller.Physics.UnitTests
             }
 
             TestContext.WriteLine($"Max. deviation was: {maxDeviation}");
+        }
+
+        private PositionVector GetPositionOnCircle(double circleRadius, double angle)
+        {
+            return new PositionVector(
+                    Math.Cos(angle) * circleRadius,
+                    Math.Sin(angle) * circleRadius,
+                    0);
+        }
+
+        private VelocityVector GetVelocityOnCircle(double circleRadius, double angle, double timeForOneRotation)
+        {
+            var angleSpeed = 2.0 * Math.PI / timeForOneRotation;
+
+            return new VelocityVector(
+                -Math.Sin(angle) * circleRadius * angleSpeed,
+                +Math.Cos(angle) * circleRadius * angleSpeed,
+                0);
+        }
+
+        private AccelerationVector GetAccelerationOnCircle(double circleRadius, double angle, double timeForOneRotation)
+        {
+            var angleSpeed = 2.0 * Math.PI / timeForOneRotation;
+
+            return new AccelerationVector(
+                -Math.Cos(angle) * circleRadius * angleSpeed * angleSpeed,
+                -Math.Sin(angle) * circleRadius * angleSpeed * angleSpeed,
+                0);
         }
     }
 }

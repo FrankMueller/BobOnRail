@@ -1,6 +1,8 @@
 .vs
 BobOnRails.Controller/BobOnRails.Controller/bin/
 BobOnRails.Controller/BobOnRails.Controller/obj/
+BobOnRails.Controller/BobOnRails.Controller.GUI/bin/
+BobOnRails.Controller/BobOnRails.Controller.GUI/obj/
 BobOnRails.Controller/BobOnRails.Controller.Physics.Core/bin/
 BobOnRails.Controller/BobOnRails.Controller.Physics.Core/obj/
 BobOnRails.Controller/BobOnRails.Controller.Physics.UnitTests/bin/

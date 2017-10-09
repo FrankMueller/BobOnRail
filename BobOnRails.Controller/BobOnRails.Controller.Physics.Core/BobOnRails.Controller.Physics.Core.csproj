@@ -37,6 +37,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MotionSimulator.cs" />
     <Compile Include="MotionTracker.cs" />
     <Compile Include="MotionCalculator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -50,7 +50,7 @@ namespace BobOnRails.Controller.Physics.Core
             var currentPosition = CurrentPosition;
 
             var newPosition = new PathPosition();
-            newPosition.TimeStep = currentPosition.TimeStep.Add(timeStep);
+            newPosition.Time = currentPosition.Time.Add(timeStep);
             newPosition.Acceleration = acceleration;
 
             var averageAcceleration = (currentPosition.Acceleration + newPosition.Acceleration) * 0.5;

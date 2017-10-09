@@ -7,7 +7,7 @@ namespace BobOnRails.Controller
     /// </summary>
     public class PathPosition
     {
-        public TimeSpan TimeStep { get; set; }
+        public TimeSpan Time { get; set; }
 
         public PositionVector Position { get; set; }
 
@@ -21,7 +21,7 @@ namespace BobOnRails.Controller
         public PathPosition(TimeSpan timeStep, PositionVector position, VelocityVector velocity, AccelerationVector acceleration)
             : this()
         {
-            TimeStep = timeStep;
+            Time = timeStep;
             Position = position;
             Velocity = velocity;
             Acceleration = acceleration;

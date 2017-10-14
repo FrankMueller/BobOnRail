@@ -100,5 +100,11 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BobOnRails.Controller.Physics.Core\BobOnRails.Controller.Physics.Core.csproj">
+      <Project>{b6505a3e-00f7-4fc2-b09a-1fc9a9874f21}</Project>
+      <Name>BobOnRails.Controller.Physics.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

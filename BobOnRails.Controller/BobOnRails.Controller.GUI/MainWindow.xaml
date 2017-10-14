@@ -16,6 +16,7 @@
             <HelixToolkit:SunLight/>
 
             <ModelVisual3D Content="{Binding Model}"/>
+            <HelixToolkit:LinesVisual3D Points="{Binding Path}"/>
 
         </HelixToolkit:HelixViewport3D>
     </Grid>

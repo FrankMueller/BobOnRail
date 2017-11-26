@@ -3,7 +3,7 @@
 
 namespace BobOnRails::Firmware {
     
-    class PathTraget {
+    class PathTarget {
         
         public:
             PathTraget(float timeStamp, 
@@ -22,7 +22,7 @@ namespace BobOnRails::Firmware {
     
             Vector3 getDrift();
     
-            Vector3 getGyration()
+            Vector3 getGyration();
             
         private:
             float timeStamp;
@@ -34,5 +34,7 @@ namespace BobOnRails::Firmware {
             Vector3 orientation;
             Vector3 drift;
             Vector3 gyration;
-    }
+    };
 }
+
+#endif

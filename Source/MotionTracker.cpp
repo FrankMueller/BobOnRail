@@ -24,7 +24,7 @@ namespace BobOnRails::Firmware {
         return currentPosition;
     }
     
-    void MotionTracker::AppendMotion(float timeStep, Vector3 acceleration, Vector3 gyration) {
+    void MotionTracker::appendMotion(float timeStep, Vector3 acceleration, Vector3 gyration) {
         
         auto dacc = acceleration - currentPosition.acceleration;
         auto velocity = currentPosition.velocity + dacc * timeStep;

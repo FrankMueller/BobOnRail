@@ -6,19 +6,18 @@
 
 int main(int argc, char *argv[])
 {
-    GyroSensorMPU6050 sensor;
+    BobOnRails::Firmware::GyroSensorMPU6050 sensor;
     sensor.connect();
 
-    MotionTracker tracker();
+    BobOnRails::Firmware::MotionTracker tracker;
     
     int sampleTime = 1000; //The sample time in micro seconds
     
     float temperature;
-    Vector3 acceleration;
-    Vector3 gyration;
+    BobOnRails::Firmware::Vector3 acceleration, gyration;
     
     timeval now, measurementStartTime, lastMeasurementStartTime;
-    gettimeofday(&lastMeasurementTime, NULL);
+    gettimeofday(&lastMeasurementStartTime, NULL);
     do
     {
         gettimeofday(&measurementStartTime, NULL);
@@ -31,7 +30,7 @@ int main(int argc, char *argv[])
     
         auto timeBetweenMeasurements = 
             (lastMeasurementStartTime.tv_usec - measurementStartTime.tv_usec) * 1E6;
-        tracker.append(timeBetweenMeasurements, acceleration, gyration);
+        tracker.appendMotion(timeBetweenMeasurements, acceleration, gyration);
         
         gettimeofday(&now, NULL);
         auto usedCycleTime = now.tv_usec - measurementStartTime.tv_usec;

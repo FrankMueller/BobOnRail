@@ -24,7 +24,7 @@ namespace BobOnRails::Firmware {
             inline Vector3 operator-() const;
             
             inline Vector3 operator*(float factor) const;
-    }
+    };
 }
 
 #endif

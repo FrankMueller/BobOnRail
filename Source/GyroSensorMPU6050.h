@@ -5,7 +5,7 @@
 #include "GyroSensor.h"
 
 namespace BobOnRails::Firmware {
-    
+
     class GyroSensorMPU6050 : public GyroSensor {
         
         public:

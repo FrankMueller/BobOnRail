@@ -1,7 +1,7 @@
 #ifndef BobOnRails_Firmware_GyroSensor_H
 #define BobOnRails_Firmware_GyroSensor_H
 
-#include "Vector3.cpp"
+#include "Vector3.h"
 
 namespace BobOnRails::Firmware {
 

@@ -11,13 +11,15 @@ namespace BobOnRails::Firmware {
         public:
             MotionTracker();
             
-            MotionTracker(PathTarget initialState);
+            MotionTracker(PathTarget);
             
-            PathTarget getCurrentPosition();
+            PathTarget getPosition();
             
-            void AppendMotion(float timeStep, Vector3 acceleration, Vector3 gyration);
+            void appendMotion(float, Vector3, Vector3);
             
         private:
             PathTarget currentPosition;
-    }
+    };
 }
+
+#endif

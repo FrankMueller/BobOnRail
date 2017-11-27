@@ -6,7 +6,7 @@ namespace BobOnRails::Firmware {
     class PathTarget {
         
         public:
-            PathTraget(float timeStamp, 
+            PathTarget(float timeStamp, 
                 Vector3 position, Vector3 velocity, Vector3 acceleration,
                 Vector3 orientation, Vector3 drift, Vector3 gyration);
             
@@ -27,13 +27,13 @@ namespace BobOnRails::Firmware {
         private:
             float timeStamp;
             
-            Vector3 position;
-            Vector3 velocity;
-            Vector3 acceleration;
+            Vector3* position;
+            Vector3* velocity;
+            Vector3* acceleration;
             
-            Vector3 orientation;
-            Vector3 drift;
-            Vector3 gyration;
+            Vector3* orientation;
+            Vector3* drift;
+            Vector3* gyration;
     };
 }
 

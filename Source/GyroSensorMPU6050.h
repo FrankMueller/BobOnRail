@@ -1,18 +1,23 @@
 #ifndef BobOnRails_Firmware_GyroSensorMPU6050_H
 #define BobOnRails_Firmware_GyroSensorMPU6050_H
 
-#include <stdint.h> 
+#include <stdint.h>
+#include "Vector3.h"
 #include "GyroSensor.h"
 
 namespace BobOnRails::Firmware {
 
-    class GyroSensorMPU6050 : public GyroSensor {
+    class GyroSensorMPU6050 {
         
         public:
             enum AccelerationResolutions { AccLow = 16, AccMedium = 8, AccHigh = 4, AccVeryHigh = 2 };
 
             enum GyroResolutions { GyroLow = 2000, GyroMedium = 1000, GyroHigh = 500, GyroVeryHigh = 250 };
-                       
+    
+            GyroSensorMPU6050();
+
+	    ~GyroSensorMPU6050();
+
             int connect();
             
             int measure(Vector3* acceleration, Vector3* gyration, float* temperature);

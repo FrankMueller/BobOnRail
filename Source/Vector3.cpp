@@ -3,10 +3,35 @@
 
 namespace BobOnRails::Firmware{
 
+    Vector3::Vector3() {
+    }
+
+    Vector3::Vector3(float x, float y, float z) {
+        X = x;
+	Y = y;
+	Z = z;
+    }
+
     float Vector3::length() const {
         return sqrt(X * X + Y * Y + Z * Z);
     }
-    
+   
+    Vector3 Vector3::zero() {
+        return Vector3(0, 0, 0);
+    }
+
+    Vector3 Vector3::vx() {
+	return Vector3(1, 0, 0);
+    }
+
+    Vector3 Vector3::vy() {
+	return Vector3(0, 1, 0);
+    }
+
+    Vector3 Vector3::vz() {
+	return Vector3(0, 0, 1);
+    }
+
     Vector3 Vector3::add(Vector3 v1, Vector3 v2) {
         return v1 + v2;
     }
@@ -18,7 +43,7 @@ namespace BobOnRails::Firmware{
     Vector3 Vector3::scale(Vector3 v, float scale) {
         return v * scale;
     }
-    
+  
     Vector3 Vector3::operator+(Vector3 v) const {
         Vector3 sum;
         sum.X = X + v.X;

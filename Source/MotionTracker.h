@@ -18,7 +18,7 @@ namespace BobOnRails::Firmware {
             void appendMotion(float, Vector3, Vector3);
             
         private:
-            PathTarget currentPosition;
+            PathTarget* currentPosition;
     };
 }
 

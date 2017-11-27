@@ -7,15 +7,15 @@ namespace BobOnRails::Firmware {
         Vector3 position, Vector3 velocity, Vector3 acceleration,
         Vector3 orientation, Vector3 drift, Vector3 gyration) {
         
-        this.timeStamp = timeStamp;
+        this->timeStamp = timeStamp;
 
-        this.position = position;
-        this.velocity = velocity;
-        this.acceleration = acceleration;
+        this->position = &position;
+        this->velocity = &velocity;
+        this->acceleration = &acceleration;
     
-        this.orientation = orientation;
-        this.drift = drift;
-        this.gyration = gyration;
+        this->orientation = &orientation;
+        this->drift = &drift;
+        this->gyration = &gyration;
     }
     
     float PathTarget::getTimeStamp() {
@@ -23,26 +23,26 @@ namespace BobOnRails::Firmware {
     }
 
     Vector3 PathTarget::getPosition() {
-        return position;
+        return *position;
     }
     
     Vector3 PathTarget::getVelocity() {
-        return velocity;
+        return *velocity;
     }
     
     Vector3 PathTarget::getAcceleration() {
-        return acceleration;
+        return *acceleration;
     }
     
     Vector3 PathTarget::getOrientation() {
-        return orientation;
+        return *orientation;
     }
     
     Vector3 PathTarget::getDrift() {
-        return drift;
+        return *drift;
     }
     
     Vector3 PathTarget::getGyration() {
-        return gyration;
+        return *gyration;
     }
 }

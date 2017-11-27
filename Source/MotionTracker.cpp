@@ -4,41 +4,35 @@ namespace BobOnRails::Firmware {
     
     MotionTracker::MotionTracker() {
         
-        currentPosition = PathTarget(0f, Vector3.Zero, Vector3.Zero, Vector3.Zero);
-
-        this.position = position;
-        this.velocity = velocity;
-        this.acceleration = acceleration;
-    
-        this.orientation = orientation;
-        this.drift = drift;
-        this.gyration = gyration;
+        currentPosition = new PathTarget(0.0, 
+			Vector3::zero(), Vector3::zero(), Vector3::zero(),
+			Vector3::zero(), Vector3::zero(), Vector3::zero());
     }
     
     MotionTracker::MotionTracker(PathTarget initialState) {
         
-        currentPosition = initialState;
+        currentPosition = &initialState;
     }
     
     PathTarget MotionTracker::getPosition() {
-        return currentPosition;
+        return *currentPosition;
     }
     
     void MotionTracker::appendMotion(float timeStep, Vector3 acceleration, Vector3 gyration) {
         
-        auto dacc = acceleration - currentPosition.acceleration;
-        auto velocity = currentPosition.velocity + dacc * timeStep;
+        auto dacc = acceleration - currentPosition->getAcceleration();
+        auto velocity = currentPosition->getVelocity() + dacc * timeStep;
         
-        auto dvel = velocity - currentPosition.velocity;
-        auto position = currentPosition.position + dvel * timeStep;
+        auto dvel = velocity - currentPosition->getVelocity();
+        auto position = currentPosition->getPosition() + dvel * timeStep;
 
-        auto dgyr = gyration - currentPosition.gyration;
-        auto drift = currentPosition.drift + dgyr * timeStep;
+        auto dgyr = gyration - currentPosition->getGyration();
+        auto drift = currentPosition->getDrift() + dgyr * timeStep;
         
-        auto dori = drift - currentPosition.drift;
-        auto orientation = currentPosition.orientation + dori * timeStep;
+        auto dori = drift - currentPosition->getDrift();
+        auto orientation = currentPosition->getOrientation() + dori * timeStep;
         
-        currentPosition = PathTarget(currentPosition.getTimeStamp() + timeStep,
+        currentPosition = new PathTarget(currentPosition->getTimeStamp() + timeStep,
             position, velocity, acceleration, 
             orientation, drift, gyration);
     }

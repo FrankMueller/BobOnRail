@@ -200,9 +200,9 @@ namespace BobOnRails::Firmware {
     
     // Combined definitions for the FS_SEL values
     #define MPU6050_FS_SEL_0 (0)
-    #define MPU6050_FS_SEL_1 (1)
-    #define MPU6050_FS_SEL_2 (2)
-    #define MPU6050_FS_SEL_3 (4)
+    #define MPU6050_FS_SEL_1 (8)
+    #define MPU6050_FS_SEL_2 (16)
+    #define MPU6050_FS_SEL_3 (24)
     
     // Alternative names for the combined definitions
     // The name uses the range in degrees per second.
@@ -244,9 +244,9 @@ namespace BobOnRails::Firmware {
     
     // Combined definitions for the AFS_SEL values
     #define MPU6050_AFS_SEL_0 (0)
-    #define MPU6050_AFS_SEL_1 (1)
-    #define MPU6050_AFS_SEL_2 (2)
-    #define MPU6050_AFS_SEL_3 (4)
+    #define MPU6050_AFS_SEL_1 (8)
+    #define MPU6050_AFS_SEL_2 (16)
+    #define MPU6050_AFS_SEL_3 (24)
     
     // Alternative names for the combined definitions
     // The name uses the full scale range for the accelerometer.

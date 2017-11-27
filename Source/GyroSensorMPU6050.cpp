@@ -1,7 +1,5 @@
-//#include <sys/types.h>
-//#include <sys/stat.h>
-//#include <sys/ioctl.h>
-//#include <linux/i2c-dev.h>
+#include <sys/ioctl.h>
+#include <linux/i2c-dev.h>
 #include <fcntl.h>
 #include <limits>
 #include <stdio.h>
@@ -10,9 +8,18 @@
 
 namespace BobOnRails::Firmware {
 
+    GyroSensorMPU6050::GyroSensorMPU6050() {
+        deviceHandle = 0;
+    }
+
+    GyroSensorMPU6050::~GyroSensorMPU6050() {
+        //if (deviceHandle != 0)
+        //    close(deviceHandle); //ToDo: Close the connection. This causes a linker error??	
+    }
+
     int GyroSensorMPU6050::connect() {
         //Initialize the I2C-bus.
-        char *deviceName = (char*)"/dev/i2c-1";
+        auto *deviceName = (char*)"/dev/i2c-1";
         deviceHandle = open(deviceName, O_RDWR);
         if (deviceHandle < 0)
         {
@@ -20,7 +27,7 @@ namespace BobOnRails::Firmware {
             return deviceHandle;
         }
         
-        int error = ioctl(deviceHandle, I2C_SLAVE, MPU6050_I2C_ADDRESS);
+        auto error = ioctl(deviceHandle, I2C_SLAVE, MPU6050_I2C_ADDRESS);
         if (error != 0)
         {
             printf("Error while establishing communication (error code %d)\n", error);
@@ -64,10 +71,14 @@ namespace BobOnRails::Firmware {
         GyroResolutions gyroResolution;
         if (getGyrationResolution(&gyroResolution) == 0)
             gyrationGain = std::numeric_limits<int16_t>::max() / gyroResolution;
+	else
+            gyrationGain = 1.0;
 
         AccelerationResolutions accelerationResolution;
         if (getAccelerationResolution(&accelerationResolution) == 0)
             accelerationGain = std::numeric_limits<int16_t>::max() / accelerationResolution;
+	else
+	    accelerationGain = 1.0;
         
         temperatureOffset = 12412.0;
         temperatureGain = 1.0 / 340.0;
@@ -78,54 +89,56 @@ namespace BobOnRails::Firmware {
     int GyroSensorMPU6050::measure(Vector3* acceleration, Vector3* gyration, float* temperature) {
         // Read the raw values.
         MPU6050RawData rawData;
-        int error = readFromMPU6050(MPU6050_ACCEL_XOUT_H, (uint8_t *) &rawData, sizeof(rawData));
+        auto error = readFromMPU6050(MPU6050_ACCEL_XOUT_H, (uint8_t *) &rawData, sizeof(rawData));
         if (error != 0)
         {
             printf("Error while reading measurement data (code %d)\n", error);
             return error;
         }
         
-        acceleration->X = (int16_t)(rawData.acceleration_x_high << 8 + rawData.acceleration_x_low) * accelerationGain;
-        acceleration->Y = (int16_t)(rawData.acceleration_y_high << 8 + rawData.acceleration_y_low) * accelerationGain;
-        acceleration->Z = (int16_t)(rawData.acceleration_z_high << 8 + rawData.acceleration_z_low) * accelerationGain;
+	acceleration = new Vector3();
+        acceleration->X = (float)(rawData.acceleration_x_high << 8 + rawData.acceleration_x_low) * accelerationGain;
+        acceleration->Y = (float)(rawData.acceleration_y_high << 8 + rawData.acceleration_y_low) * accelerationGain;
+        acceleration->Z = (float)(rawData.acceleration_z_high << 8 + rawData.acceleration_z_low) * accelerationGain;
     
-        gyration->X = (int16_t)(rawData.gyration_x_high << 8 + rawData.gyration_x_low) * gyrationGain;
-        gyration->Y = (int16_t)(rawData.gyration_y_high << 8 + rawData.gyration_y_low) * gyrationGain;
-        gyration->Z = (int16_t)(rawData.gyration_z_high << 8 + rawData.gyration_z_low) * gyrationGain;
+	gyration = new Vector3();
+        gyration->X = (float)(rawData.gyration_x_high << 8 + rawData.gyration_x_low) * gyrationGain;
+        gyration->Y = (float)(rawData.gyration_y_high << 8 + rawData.gyration_y_low) * gyrationGain;
+        gyration->Z = (float)(rawData.gyration_z_high << 8 + rawData.gyration_z_low) * gyrationGain;
         
         // The temperature sensor is -40 to +85 degrees Celsius.
         // It is a signed integer.
         // According to the datasheet:
         //   340 per degrees Celsius, -512 at 35 degrees.
         // At 0 degrees: -512 - (340 * 35) = -12412
-        float temperatureValue = (int16_t)(rawData.temperature_high << 8 + rawData.temperature_low);
+        auto temperatureValue = (float)(rawData.temperature_high << 8 + rawData.temperature_low);
         *temperature = (temperatureValue + temperatureOffset) * temperatureGain;
     
         return 0;
     }
         
     int GyroSensorMPU6050::getGyrationResolution(GyroResolutions* resolution) {
-        printf("Getting gyro resolution %d...", resolution);
+        printf("Getting gyro resolution...");
         
         uint8_t resolutionFlag;
-        int error = readFromMPU6050(MPU6050_FS_SEL0, &resolutionFlag, 1);
+        auto error = readFromMPU6050(MPU6050_FS_SEL0, &resolutionFlag, 1);
         if (error != 0)
             printf("error (code %d)\n", error);
         else {
-            if (resolutionFlag == MPU6050_FS_SEL_2000)
+ 	    if ((resolutionFlag & MPU6050_FS_SEL_2000) == MPU6050_FS_SEL_2000)
                 *resolution = GyroResolutions::GyroLow;
-            else if (resolutionFlag == MPU6050_FS_SEL_1000)
+            else if ((resolutionFlag & MPU6050_FS_SEL_1000) == MPU6050_FS_SEL_1000)
                 *resolution = GyroResolutions::GyroMedium;
-            else if (resolutionFlag == MPU6050_FS_SEL_500)
+            else if ((resolutionFlag & MPU6050_FS_SEL_500) == MPU6050_FS_SEL_500)
                 *resolution = GyroResolutions::GyroHigh;
-            else if (resolutionFlag == MPU6050_FS_SEL_250)
+            else if ((resolutionFlag & MPU6050_FS_SEL_250) == MPU6050_FS_SEL_250)
                 *resolution = GyroResolutions::GyroVeryHigh;
             else {
-                printf("error (Unknown resolution set on device!)\n");
+                printf("error (Unknown resolution set on device:%d)\n", resolutionFlag);
                 return -1;
             }
             
-            printf("%f °/s\n", resolution);
+            printf("%d °/s\n", *resolution);
         }
         
         return error;
@@ -160,27 +173,27 @@ namespace BobOnRails::Firmware {
     }
     
     int GyroSensorMPU6050::getAccelerationResolution(AccelerationResolutions* resolution) {
-        printf("Getting acceleration resolution %d...", resolution);
+        printf("Getting acceleration resolution...");
         
         uint8_t resolutionFlag;
         int error = readFromMPU6050(MPU6050_AFS_SEL0, &resolutionFlag, 1);
         if (error != 0)
             printf("error (code %d)\n", error);
         else {
-            if (resolutionFlag == MPU6050_AFS_SEL_16G)
+            if ((resolutionFlag & MPU6050_AFS_SEL_16G) == MPU6050_AFS_SEL_16G)
                 *resolution = AccelerationResolutions::AccLow;
-            else if (resolutionFlag == MPU6050_AFS_SEL_8G)
+            else if ((resolutionFlag & MPU6050_AFS_SEL_8G) == MPU6050_AFS_SEL_8G)
                 *resolution = AccelerationResolutions::AccMedium;
-            else if (resolutionFlag == MPU6050_AFS_SEL_4G)
+            else if ((resolutionFlag & MPU6050_AFS_SEL_4G) == MPU6050_AFS_SEL_4G)
                 *resolution = AccelerationResolutions::AccHigh;
-            else if (resolutionFlag == MPU6050_AFS_SEL_2G)
+            else if ((resolutionFlag & MPU6050_AFS_SEL_2G) == MPU6050_AFS_SEL_2G)
                 *resolution = AccelerationResolutions::AccVeryHigh;
             else {
-                printf("error (Unknown resolution set on device!)\n");
+                printf("error (Unknown resolution set on device: %d)\n", resolutionFlag);
                 return -1;
             }
             
-            printf("%f g\n", resolution);
+            printf("%d g\n", *resolution);
         }
         
         return error;

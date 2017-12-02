@@ -16,7 +16,7 @@ namespace BobOnRails {
 
 			PathTarget getPosition();
 
-			void appendMotion(float timeStep, Vector3 acceleration, Vector3 gyration);
+			void appendMotion(double timeStep, Vector3 acceleration, Vector3 gyration);
 
 		private:
 			PathTarget currentPosition;

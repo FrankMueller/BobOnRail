@@ -7,13 +7,13 @@ namespace BobOnRails {
 		Vector3::Vector3() {
 		}
 
-		Vector3::Vector3(float x, float y, float z) {
+		Vector3::Vector3(double x, double y, double z) {
 			X = x;
 			Y = y;
 			Z = z;
 		}
 
-		float Vector3::length() const {
+		double Vector3::length() const {
 			return sqrt(X * X + Y * Y + Z * Z);
 		}
 
@@ -41,7 +41,7 @@ namespace BobOnRails {
 			return v1 - v2;
 		}
 
-		Vector3 Vector3::scale(Vector3 v, float scale) {
+		Vector3 Vector3::scale(Vector3 v, double scale) {
 			return v * scale;
 		}
 
@@ -72,7 +72,7 @@ namespace BobOnRails {
 			return inverse;
 		}
 
-		Vector3 Vector3::operator*(float factor) const {
+		Vector3 Vector3::operator*(double factor) const {
 			Vector3 res;
 			res.X = X * factor;
 			res.Y = Y * factor;

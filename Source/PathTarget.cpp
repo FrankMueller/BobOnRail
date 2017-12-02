@@ -16,7 +16,7 @@ namespace BobOnRails {
 			gyration = Vector3::zero();
 		}
 
-		PathTarget::PathTarget(float timeStamp,
+		PathTarget::PathTarget(double timeStamp,
 			Vector3 position, Vector3 velocity, Vector3 acceleration,
 			Vector3 orientation, Vector3 drift, Vector3 gyration) {
 
@@ -31,7 +31,7 @@ namespace BobOnRails {
 			this->gyration = gyration;
 		}
 
-		float PathTarget::getTimeStamp() {
+		double PathTarget::getTimeStamp() {
 			return timeStamp;
 		}
 

@@ -6,9 +6,9 @@ namespace BobOnRails {
 
 		class Vector3 {
 		public:
-			float X;
-			float Y;
-			float Z;
+			double X;
+			double Y;
+			double Z;
 
 			/**
 			   Initializes a new instance of the Vector3 class.
@@ -22,14 +22,14 @@ namespace BobOnRails {
 			   @param[in]  y The y-coordinate of the vector.
 			   @param[in]  z The z-coordinate of the vector.
 			  */
-			Vector3(float x, float y, float z);
+			Vector3(double x, double y, double z);
 
 			/**
 			   Gets the length of the vector.
 
 			   @return The length.
 			 */
-			float length() const;
+			double length() const;
 
 			/**
 			   Gets a new vector with all coordinates set to zero.
@@ -72,7 +72,7 @@ namespace BobOnRails {
 
 			static Vector3 subtract(Vector3 v1, Vector3 v2);
 
-			static Vector3 scale(Vector3 v, float scale);
+			static Vector3 scale(Vector3 v, double scale);
 
 			Vector3 operator+(Vector3 v) const;
 
@@ -80,7 +80,7 @@ namespace BobOnRails {
 
 			Vector3 operator-() const;
 
-			Vector3 operator*(float factor) const;
+			Vector3 operator*(double factor) const;
 		};
 	}
 }

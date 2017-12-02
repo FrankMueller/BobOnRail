@@ -9,11 +9,11 @@ namespace BobOnRails {
 		public:
 			PathTarget();
 
-			PathTarget(float timeStamp,
+			PathTarget(double timeStamp,
 				Vector3 position, Vector3 velocity, Vector3 acceleration,
 				Vector3 orientation, Vector3 drift, Vector3 gyration);
 
-			float getTimeStamp();
+			double getTimeStamp();
 
 			Vector3 getPosition();
 
@@ -28,7 +28,7 @@ namespace BobOnRails {
 			Vector3 getGyration();
 
 		private:
-			float timeStamp;
+			double timeStamp;
 
 			Vector3 position;
 			Vector3 velocity;

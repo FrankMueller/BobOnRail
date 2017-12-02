@@ -4,22 +4,23 @@
 #include "Vector3.h"
 #include "PathTarget.h"
 
-namespace BobOnRails::Firmware {
-    
-    class MotionTracker {
-        
-        public:
-            MotionTracker();
-            
-            MotionTracker(PathTarget);
-            
-            PathTarget getPosition();
-            
-            void appendMotion(float, Vector3, Vector3);
-            
-        private:
-            PathTarget* currentPosition;
-    };
-}
+namespace BobOnRails {
+	namespace Firmware {
 
+		class MotionTracker {
+
+		public:
+			MotionTracker();
+
+			MotionTracker(PathTarget initialState);
+
+			PathTarget getPosition();
+
+			void appendMotion(float timeStep, Vector3 acceleration, Vector3 gyration);
+
+		private:
+			PathTarget currentPosition;
+		};
+	}
+}
 #endif

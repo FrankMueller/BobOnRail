@@ -1,31 +1,34 @@
-#ifndef BobOnRails_Firmware_GyroSensor_H
-#define BobOnRails_Firmware_GyroSensor_H
+// Copyright 2017 Frank Mueller
+#ifndef SOURCE_GYROSENSOR_H_
+#define SOURCE_GYROSENSOR_H_
 
 #include "Vector3.h"
 
 namespace BobOnRails {
-	namespace Firmware {
+namespace Firmware {
 
-		class GyroSensor {
-		public:
-			/**
-			   Establishes a connection to the device.
+class GyroSensor {
+ public:
+    const float gToMeterPerSecond = 9.81f;
 
-			   @return zero if the operation succeeded; otherwise an error code.
-			 */
-			virtual int connect() = 0;
+    /**
+       Establishes a connection to the device.
 
-			/**
-			   Reads the current measurement data from the device.
+       @return zero if the operation succeeded; otherwise an error code.
+     */
+    virtual int connect() = 0;
 
-			   @param[out]  acceleration The measured acceleration in m/s^2
-			   @param[out]  gyration The measured gyration in deg/s^2
-			   @param[out]  temperature The measured temperature in °C
+    /**
+       Reads the current measurement data from the device.
 
-			   @return zero if the operation succeeded; otherwise an error code.
-			 */
-			virtual int measure(Vector3* acceleration, Vector3* gyration, float* temperature) = 0;
-		};
-	}
-}
-#endif
+       @param[out]  acceleration The measured acceleration in m/s^2
+       @param[out]  gyration The measured gyration in deg/s^2
+       @param[out]  temperature The measured temperature in °C
+
+       @return zero if the operation succeeded; otherwise an error code.
+     */
+    virtual int measure(Vector3* acceleration, Vector3* gyration, float* temperature) = 0;
+};
+}       // namespace Firmware
+}       // namespace BobOnRails
+#endif  // SOURCE_GYROSENSOR_H_

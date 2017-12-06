@@ -1,3 +1,4 @@
+// Copyright 2017 Frank Mueller
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/time.h>
@@ -5,48 +6,47 @@
 #include "GyroSensorMPU6050.h"
 #include "MotionTracker.h"
 
-int main(int argc, char *argv[])
-{
-	auto sensor = BobOnRails::Firmware::GyroSensorMPU6050();
-	sensor.connect();
+int main(int argc, char *argv[]) {
+    auto sensor = BobOnRails::Firmware::GyroSensorMPU6050();
+    sensor.connect();
 
-	auto tracker = BobOnRails::Firmware::MotionTracker();
+    auto tracker = BobOnRails::Firmware::MotionTracker();
 
-	int sampleTime = 1000000; //The sample time in micro seconds
+    int sampleTime = 1000000;   // The sample time in micro seconds
 
+    timeval now, lastMeasurementStartTime;
 
-	timeval now, lastMeasurementStartTime;
+    gettimeofday(&lastMeasurementStartTime, NULL);
+    do {
+        timeval measurementStartTime;
+        gettimeofday(&measurementStartTime, NULL);
 
-	gettimeofday(&lastMeasurementStartTime, NULL);
-	do
-	{
-		timeval measurementStartTime;
-		gettimeofday(&measurementStartTime, NULL);
+        auto temperature = 0.0f;
+        auto acceleration = BobOnRails::Firmware::Vector3();
+        auto gyration = BobOnRails::Firmware::Vector3();
+        sensor.measure(&acceleration, &gyration, &temperature);
 
-		auto temperature = 0.0f;
-		auto acceleration = BobOnRails::Firmware::Vector3();
-		auto gyration = BobOnRails::Firmware::Vector3();
-		sensor.measure(&acceleration, &gyration, &temperature);
+        auto timeBetweenMeasurements =
+            (lastMeasurementStartTime.tv_usec - measurementStartTime.tv_usec) * 1E-6;
+        tracker.appendMotion(timeBetweenMeasurements, acceleration, gyration);
 
-		printf("Acceleration: (%f, %f, %f)[m/s^2], (%f, %f, %f)[deg/s^2], (%f)[°C]\n",
-			acceleration.X, acceleration.Y, acceleration.Z,
-			gyration.X, gyration.Y, gyration.Z,
-			temperature);
+        gettimeofday(&now, NULL);
+        auto usedCycleTime = now.tv_usec - measurementStartTime.tv_usec;
 
-		auto timeBetweenMeasurements =
-			(lastMeasurementStartTime.tv_usec - measurementStartTime.tv_usec) * 1E-6;
-		tracker.appendMotion(timeBetweenMeasurements, acceleration, gyration);
+        auto currentPosition = tracker.getPosition().getPosition();
 
-		gettimeofday(&now, NULL);
-		auto usedCycleTime = now.tv_usec - measurementStartTime.tv_usec;
+        auto sleepTime = sampleTime - usedCycleTime;
 
-		auto currentPosition = tracker.getPosition();
-		printf("Position: (%f, %f, %f)[m]\n", currentPosition);
+        printf("\rState: a=(%5.2f, %5.2f, %5.2f)[m/s^2], g=(%5.2f, %5.2f, %5.2f)[deg/s^2],"
+            "T=(%5.2f)[°C], P=(%7.4f, %7.4f, %7.4f)[m], dt=(%5.2f)[ms]",
+            acceleration.X, acceleration.Y, acceleration.Z,
+            gyration.X, gyration.Y, gyration.Z,
+            temperature,
+            currentPosition.X, currentPosition.Y, currentPosition.Z,
+            usedCycleTime * 0.001);
 
-		auto sleepTime = sampleTime - usedCycleTime;
-		printf("Cycle time was %d micros seconds, sleeping for %d micro seconds\n", usedCycleTime, sleepTime);
-		usleep(sleepTime);
+        usleep(sleepTime);
 
-		lastMeasurementStartTime = measurementStartTime;
-	} while (1);
+        lastMeasurementStartTime = measurementStartTime;
+    } while (1);
 }

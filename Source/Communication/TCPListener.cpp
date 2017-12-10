@@ -11,7 +11,7 @@ namespace BobOnRails {
 namespace Firmware {
 namespace Communication {
 
-TCPClient<Request, Response> TCPListener::listen(const uint16_t port) {
+TCPClient<RequestTypes, ResponseTypes> TCPListener::listen(const uint16_t port) {
     auto socketId = socket(AF_INET, SOCK_STREAM, 0);
 
     sockaddr_in serverAddr;
@@ -40,7 +40,7 @@ TCPClient<Request, Response> TCPListener::listen(const uint16_t port) {
 
     close(socketId);
 
-    TCPClient<Request, Response> client(clientSocketId);
+    TCPClient<RequestTypes, ResponseTypes> client(clientSocketId);
     return client;
 }
 

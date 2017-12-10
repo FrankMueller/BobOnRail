@@ -7,13 +7,13 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/uio.h>
-#include "Response.h"
+#include "Message.h"
 
 namespace BobOnRails {
 namespace Firmware {
 namespace Communication {
 
-template<typename TIncomingMessage, typename TOutgoingMessage>
+template<typename TIncomingMessageType, typename TOutgoingMessageType>
 class TCPClient {
     public:
     explicit TCPClient(const int socketId) {
@@ -34,11 +34,11 @@ class TCPClient {
         return availableDescriptorCount == 1;
     }
 
-    int sendMessage(TOutgoingMessage message) {
+    int sendMessage(Message<TOutgoingMessageType> message) {
         size_t bytesSend;
 
         //Send the message type
-        int8_t messageType = message.getTypeCode();
+        int8_t messageType = static_cast<int8_t>(message.getType());
         bytesSend = send(socketId, &messageType, sizeof(messageType), 0);
         if (bytesSend < 0)
             return errno;
@@ -63,7 +63,7 @@ class TCPClient {
         return 0;
     }
 
-    int receiveMessage(TIncomingMessage *message) {
+    int receiveMessage(Message<TIncomingMessageType> *message) {
         size_t bytesRead;
 
         //Read the message type byte
@@ -93,14 +93,14 @@ class TCPClient {
             bodyBytesRead += bytesRead;
         }
 
-        message->setTypeCode(messageTypeCode);
+        message->setType((TIncomingMessageType)messageTypeCode);
         message->setBody(messageBody);
 
         return 0;
     }
 
     int shutdown() {
-        auto error = shutdown(socketId(), SHUT_RDWR);
+        auto error = shutdown(socketId, SHUT_RDWR);
         if (error != 0)
             return errno;
 

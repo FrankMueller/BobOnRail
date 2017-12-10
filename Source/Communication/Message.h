@@ -9,23 +9,40 @@ namespace BobOnRails {
 namespace Firmware {
 namespace Communication {
 
+template<typename TMessageType>
 class Message {
- public:
-    Message();
+    public:
+    Message() {
+        this->type = static_cast<TMessageType>(0);
+        this->body = std::vector<int8_t>(0);
+    }
 
-    explicit Message(std::vector<int8_t> body);
+    explicit Message(TMessageType type, std::vector<int8_t> body) {
+        this->type = type;
+        this->body = body;
+    }
 
-    virtual int8_t getTypeCode() = 0;
+    TMessageType getType() {
+        return type;
+    }
 
-    virtual void setTypeCode(int8_t code) = 0;
+    void setType(TMessageType type) {
+        this->type = type;
+    }
 
-    std::vector<int8_t> getBody();
+    std::vector<int8_t> getBody() {
+        return body;
+    }
 
-    void setBody(std::vector<int8_t> body);
- 
- private:
+    void setBody(std::vector<int8_t> body) {
+        this->body = body;
+    }
+
+    private:
     /** The message body. */
     std::vector<int8_t> body;
+
+    TMessageType type;
 };
 }       // namespace Communication
 }       // namespace Firmware
